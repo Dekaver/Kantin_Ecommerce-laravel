@@ -42,7 +42,8 @@
                         <td>{{$product->category}}</td>
                     </tr>
                 </table>
-                <form action="{{route('cart.create')}}" method="post">
+                <form action="{{route('user.cart.store',Auth::id())}}" method="post">
+                    @csrf
                     <input type="hidden" name="product_id" value="{{$product->id}}">
                     <input type="hidden" name="user_id" value="{{Auth::id()}}">
                     <button type="submit" class="font-bold text-2xl m-3 bg-yellow-400 rounded-lg px-2 py-1">Add Chart</button>

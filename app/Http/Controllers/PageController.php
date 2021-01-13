@@ -13,7 +13,7 @@ class PageController extends Controller
     public function dashboard_admin()
     {
         $products = Product::all();
-        $users = User::all();
+        $users = User::orderBy("name", 'asc')->where('role','user')->paginate(5);
         return view('pages.admin.dashboard',compact('products', 'users'));
     }
 

@@ -3,16 +3,22 @@
     buy
   </x-slot>
   @include('layouts.nav-guest')
-  <form method="POST" action="/buyer/{{$buyer_id}}/transaction" enctype="multipart/form-data">
-    <main class="bg-gray-300 h-96">
-    @csrf
-    <input type="hidden" name="buyer_id" value="{{$buyer_id}}">
+  <style>
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+  
+    <main class="bg-gray-300 h-screen">
+    {{-- <input type="hidden" name="buyer_id" value="{{$buyer_id}}">
     <input type="hidden" name="product_id" value="{{$product->id}}">
-    <input type="hidden" name="status" value="waiting">
+    <input type="hidden" name="status" value="waiting"> --}}
     <div class="container grid px-6 mx-auto">
       
       <div class="w-full pt-8 overflow-hidden rounded-lg shadow-xs">
-        <div class="w-full overflow-x-auto">
+        <div class="w-full overflow-auto max-h-84">
           <table class="w-full whitespace-no-wrap">
             <thead>
               <tr
@@ -20,8 +26,7 @@
                 >
                 <th class="px-4 py-3">Product</th>
                 <th class="px-4 py-3">Price</th>
-                <th class="px-4 py-3">Seller</th>
-                <th class="px-4 py-3">Kuantitas</th>
+                <th class="px-4 py-3">Quantity</th>
                 <th class="px-4 py-3">Action</th>
               </tr>
             </thead>
@@ -29,139 +34,91 @@
             <tbody
               class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
             >
+            @foreach ($products as $product)
               <tr class="text-gray-700 dark:text-gray-400">
-                <td class="px-4 py-3">
-                  <div class="flex items-center text-sm">
-                    <!-- Avatar with inset shadow -->
-                    <div
-                      class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
-                    >
-                      <img
-                        class="object-cover w-full h-full rounded-full"
-                        src="{{asset('img/product/'.$product->image_url)}}"
-                        alt=""
-                        loading="lazy"
-                      />
+                  <td class="px-4 py-3">
+                    <div class="flex items-center text-sm">
+                      <!-- Avatar with inset shadow -->
                       <div
-                        class="absolute inset-0 rounded-full shadow-inner"
-                        aria-hidden="true"
-                      ></div>
-                    </div>
-                    <div>
-                      <p class="font-semibold">{{$product->name}}</p>
-                      <p class="text-xs text-gray-600 dark:text-gray-400">
-                        {{$product->category}}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-4 py-3 text-sm">
-                  Rp. <span id='price'>{{$product->price}}</span>
-                </td>
-                <td class="px-4 py-3 text-sm">
-                  <span>{{$product->seller_name}}</span><br>
-                  <span>{{$product->shop_name}}</span>
-                </td>
-                <td class="px-4 py-3 text-xs">
-                  
-                  <div class="custom-number-input h-10 w-32">
-                    <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
-                      <button data-action="decrement" class="bg-white border border-gray-500 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer">
-                        <span class="m-auto text-2xl font-thin">−</span>
-                      </button>
-                      <input 
-                        class="outline-none focus:outline-none text-center w-full bg-white font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700" 
-                        type="number" 
-                        name="total" 
-                        value="1"/>
-                      <button data-action="increment" class="bg-white border border-gray-500 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                        <span class="m-auto text-2xl font-thin">+</span>
-                      </button>
-                    <style>
-                      input[type='number']::-webkit-inner-spin-button,
-                      input[type='number']::-webkit-outer-spin-button {
-                        -webkit-appearance: none;
-                        margin: 0;
-                      }
-                    </style>
-                    <script>
-                      function decrement(e) {
-                        const price = document.getElementById('price').innerHTML;
-                        const cost = document.getElementById('cost');
-                        const btn = e.target.parentNode.parentElement.querySelector(
-                          'button[data-action="decrement"]'
-                        );
-                        const target = btn.nextElementSibling;
-                        let value = Number(target.value);
-                        value--;
-                        target.value = value;
-                        cost.value = price*value;
-                      }
-                    
-                      function increment(e) {
-                        const price = document.getElementById('price').innerHTML;
-                        const cost = document.getElementById('cost');
-                        
-                        const btn = e.target.parentNode.parentElement.querySelector(
-                          'button[data-action="decrement"]'
-                        );
-                        const target = btn.nextElementSibling;
-                        let value = Number(target.value);
-                        value++;
-                        target.value = value;
-                        cost.value = price*value;
-                      }
-                    
-                      const decrementButtons = document.querySelectorAll(
-                        `button[data-action="decrement"]`
-                      );
-                    
-                      const incrementButtons = document.querySelectorAll(
-                        `button[data-action="increment"]`
-                      );
-                    
-                      decrementButtons.forEach(btn => {
-                        btn.addEventListener("click", decrement);
-                      });
-                    
-                      incrementButtons.forEach(btn => {
-                        btn.addEventListener("click", increment);
-                      });
-
-                      var buttons = document.querySelectorAll('form button:not([type="submit"])');
-                      for (i = 0; i < buttons.length; i++) {
-                        buttons[i].addEventListener('click', function(e) {
-                          e.preventDefault();
-                        });
-                      }
-
-                    </script>
-                    </div>
-                  </div>
-                  
-                </td>
-                <td class="px-4 py-3">
-                  <div class="flex items-center space-x-4 text-sm">
-                    <button
-                      class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
-                      aria-label="Delete"
-                    >
-                      <svg
-                        class="w-5 h-5"
-                        aria-hidden="true"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
+                        class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
                       >
-                        <path
-                          fill-rule="evenodd"
-                          d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                          clip-rule="evenodd"
-                        ></path>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                        <img
+                          class="object-cover w-full h-full rounded-full"
+                          src="{{asset('img/product/'.$product->product_photo)}}"
+                          alt=""
+                          loading="lazy"
+                        />
+                        <div
+                          class="absolute inset-0 rounded-full shadow-inner"
+                          aria-hidden="true"
+                        ></div>
+                      </div>
+                      <div>
+                        <p class="font-semibold">{{$product->product_name}}</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">
+                          {{$product->category}}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-sm">
+                    Rp. <span id='price'>{{$product->price}}</span>
+                  </td>
+                  
+                  <td class="px-4 py-3 text-xs">
+                    
+                    <div class="custom-number-input h-10 w-32">
+                      <form action="{{route('cart.update',$product->id)}}" method="post">
+                        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+                          @csrf
+                          @method("PUT")
+                          <input type="hidden" name="user_id" value="{{Auth::id()}}">
+                          <button data-action="decrement" type="submit" class="bg-white border border-gray-500 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer">
+                            <span class="m-auto text-2xl font-thin">−</span>
+                          </button>
+                          <input 
+                            class="outline-none focus:outline-none text-center w-full bg-white font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700" 
+                            type="number"   
+                            name="total" 
+                            value="{{$product->quantity}}"/>
+                          <button data-action="increment" type="submit" class="bg-white border border-gray-500 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
+                            <span class="m-auto text-2xl font-thin">+</span>
+                          </button>  
+                     
+                        </form>
+                      </div>
+                    </div>
+                    
+                  </td>
+                  <td class="px-4 py-3">
+                    <form action="{{route('cart.destroy',$product->id)}}" method="post">
+                      @csrf
+                      @method("DELETE")
+                      <input type="hidden" name="user_id" value="{{Auth::id()}}">
+                      <div class="flex items-center space-x-4 text-sm">
+                        <button
+                          type="submit"
+                          class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                          aria-label="Delete"
+                        >
+                          <svg
+                            class="w-5 h-5"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                              clip-rule="evenodd"
+                            ></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </form>
+                  </td>
+                </tr>
+                @endforeach
             </tbody>
           </table>
         </div>
@@ -184,25 +141,9 @@
       </div>
     </div>
     </main>
-    <div class="fixed bottom-0 h-96 md:h-56 w-full p-6 bg-white dark:bg-gray-900">
-      <div class="-mx-3 md:flex mb-6">
-        <div class="md:w-1/2 px-3 mb-6 md:mb-0">
-          <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-first-name">
-            name
-          </label>
-          <p class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-3 px-4 mb-3" id="grid-first-name" type="text">{{Auth::user()->name}}</p>
-        </div>
-        <div class="md:w-1/2 px-3">
-          <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
-            Note
-          </label>
-          <input 
-            class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" 
-            id="grid-last-name" 
-            type="text" 
-            placeholder="Optional">
-        </div>
-      </div>
+    <form method="POST" action="{{route('user.purchase.create',Auth::id())}}" enctype="multipart/form-data">
+      @csrf
+      <div class="fixed bottom-0 h-44 md:h-40 w-full p-6 bg-white dark:bg-gray-900">
         <div class="flex">
           <div class="w-1/6"></div>
           <div class="w-2/6">
@@ -213,21 +154,70 @@
             <input 
               class="text-4xl inline w-2/4 border-none" 
               type="text" 
-              value="{{$product->price}}" 
+              value="{{$product->price}}"   
               name="cost" 
               id="cost">
-            
-          </div>
-          <div class="w-1/6">
-            <x-auth-validation-errors class="mb-4" :errors="$errors"/>
-            <button type="submit" class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                {{ __('Checkout') }}
-            </button>
+              
+            </div>
+            <div class="w-1/6">
+              <x-auth-validation-errors class="mb-4" :errors="$errors"/>
+              <button type="submit" class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                  {{ __('Checkout') }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
+    <script>
+      function decrement(e) {
+        const cost = document.getElementById('cost');
+        const btn = e.target.parentNode.parentElement.querySelector(
+          'button[data-action="decrement"]'
+        );
+        const target = btn.nextElementSibling;
+        let value = Number(target.value);
+        value--;
+        target.value = value;
+        cost.value = price*value;
+      }
+    
+      function increment(e) {
+        const price = document.getElementById('price').innerHTML;
+        const cost = document.getElementById('cost');
+        
+        const btn = e.target.parentNode.parentElement.querySelector(
+          'button[data-action="decrement"]'
+        );
+        const target = btn.nextElementSibling;
+        let value = Number(target.value);
+        value++;
+        target.value = value;
+        cost.value = price*value;
+      }
+    
+      const decrementButtons = document.querySelectorAll(
+        `button[data-action="decrement"]`
+      );
+    
+      const incrementButtons = document.querySelectorAll(
+        `button[data-action="increment"]`
+      );
+    
+      decrementButtons.forEach(btn => {
+        btn.addEventListener("click", decrement);
+      });
+    
+      incrementButtons.forEach(btn => {
+        btn.addEventListener("click", increment);
+      });
 
-  </form>
-  
+      var buttons = document.querySelectorAll('form button:not([type="submit"])');
+      for (i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function(e) {
+          e.preventDefault();
+        });
+      }
+
+    </script>
 </x-guest-layout>
