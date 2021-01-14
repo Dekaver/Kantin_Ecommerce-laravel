@@ -12,11 +12,7 @@
   </style>
   
     <main class="bg-gray-300 h-screen">
-    {{-- <input type="hidden" name="buyer_id" value="{{$buyer_id}}">
-    <input type="hidden" name="product_id" value="{{$product->id}}">
-    <input type="hidden" name="status" value="waiting"> --}}
     <div class="container grid px-6 mx-auto">
-      
       <div class="w-full pt-8 overflow-hidden rounded-lg shadow-xs">
         <div class="w-full overflow-auto max-h-84">
           <table class="w-full whitespace-no-wrap">
@@ -62,7 +58,7 @@
                     </div>
                   </td>
                   <td class="px-4 py-3 text-sm">
-                    Rp. <span id='price'>{{$product->price}}</span>
+                    Rp. <span id='price'>{{$product->product_price}}</span>
                   </td>
                   
                   <td class="px-4 py-3 text-xs">
@@ -79,7 +75,8 @@
                           <input 
                             class="outline-none focus:outline-none text-center w-full bg-white font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700" 
                             type="number"   
-                            name="total" 
+                            name="total"
+                            readonly
                             value="{{$product->quantity}}"/>
                           <button data-action="increment" type="submit" class="bg-white border border-gray-500 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
                             <span class="m-auto text-2xl font-thin">+</span>
@@ -141,7 +138,7 @@
       </div>
     </div>
     </main>
-    <form method="POST" action="{{route('user.purchase.create',Auth::id())}}" enctype="multipart/form-data">
+    <form method="POST" action="{{route('user.purchase.store',Auth::id())}}" enctype="multipart/form-data">
       @csrf
       <div class="fixed bottom-0 h-44 md:h-40 w-full p-6 bg-white dark:bg-gray-900">
         <div class="flex">
@@ -154,10 +151,10 @@
             <input 
               class="text-4xl inline w-2/4 border-none" 
               type="text" 
-              value="{{$product->price}}"   
               name="cost" 
+              value="0"
+              readonly
               id="cost">
-              
             </div>
             <div class="w-1/6">
               <x-auth-validation-errors class="mb-4" :errors="$errors"/>
@@ -171,7 +168,7 @@
     </form>
     <script>
       function decrement(e) {
-        const cost = document.getElementById('cost');
+        
         const btn = e.target.parentNode.parentElement.querySelector(
           'button[data-action="decrement"]'
         );
@@ -179,13 +176,18 @@
         let value = Number(target.value);
         value--;
         target.value = value;
-        cost.value = price*value;
-      }
-    
-      function increment(e) {
-        const price = document.getElementById('price').innerHTML;
-        const cost = document.getElementById('cost');
         
+      }
+      var cost =0;
+      var products = {!!json_encode($products)!!};
+      products.forEach(
+        function(item, index){
+          cost += item['product_price'] * item['quantity'];
+        }
+      )
+      document.getElementById('cost').value = cost;
+      function increment(e) {
+               
         const btn = e.target.parentNode.parentElement.querySelector(
           'button[data-action="decrement"]'
         );
@@ -193,7 +195,6 @@
         let value = Number(target.value);
         value++;
         target.value = value;
-        cost.value = price*value;
       }
     
       const decrementButtons = document.querySelectorAll(

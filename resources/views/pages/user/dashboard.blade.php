@@ -124,7 +124,7 @@
                     @foreach ($products as $product)
                     <div class="w-full md:w-1/3 xl:w-1/4 p-6 flex flex-col">
                         @guest
-                            <a href="{{route('login')}}"></a>
+                            <a href="{{ route('login') }}"></a>
                         @else
                             <a href='product/{{{$product->id}}}/show'>
                         @endguest

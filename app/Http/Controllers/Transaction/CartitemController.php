@@ -61,7 +61,7 @@ class CartitemController extends Controller
      */
     public function store(Request $request, $id)
     {
-        $cart_id = CartItem::where('cart_id', $id)->get('id')->pluck('id')->first();
+        $cart_id = Cart::where('user_id', $id)->get()->pluck('id')->first();
         $cart_item = CartItem::create([
             'cart_id' => $cart_id,
             'quantity' => 1,
